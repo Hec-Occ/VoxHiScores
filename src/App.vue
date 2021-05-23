@@ -1,5 +1,5 @@
 <template>
-  <button v-for="item in bossNameArray" :key="item" v-on:click="table.rows=memberKcDictionary[item]">
+  <button v-for="item in bossNameArray" :key="item" v-on:click="onClick(item)">
     {{item}}
   </button>
   <table-lite
@@ -10,10 +10,6 @@
     :rows="table.rows"
     :total="table.totalRecordCount"
     :sortable="table.sortable"
-    :messages="table.messages"
-    @do-search="doSearch"
-    @is-finished="tableLoadingFinish"
-    @return-checked-rows="updateCheckedRows"
   ></table-lite>
 </template>
 
@@ -28,7 +24,7 @@ export default {
     TableLite
   },
   data: function () {
-    return { d: true, table, bossNameArray, currentBossRows, memberKcDictionary }
+    return { d: true, table, bossNameArray, currentBossRows, memberKcDictionary, onClick }
   }
 }
 
@@ -37,22 +33,29 @@ const memberKcDictionary = hiScores.memberKcDictionary
 const bossNameArray = Object.keys(memberKcDictionary)
 // console.log(bossNameArray)
 const currentBossRows = memberKcDictionary[bossNameArray[0]]
+currentBossRows.map((item, index) => { item.index = index + 1 })
 // console.log('currentBossRows ' + currentBossRows)
+console.log(memberKcDictionary)
 const table = reactive({
   isLoading: false,
   isReSearch: false,
   columns: [
     {
+      label: 'Rank',
+      field: 'index',
+      width: '20%'
+    },
+    {
       label: 'Member',
       field: 'key',
-      width: '50%',
+      width: '40%',
       sortable: true,
       isKey: true
     },
     {
       label: 'Kill Count',
       field: 'value',
-      width: '50%',
+      width: '40%',
       sortable: true,
       display: function (row) {
         return (
@@ -74,7 +77,12 @@ const table = reactive({
     noDataAvailable: 'No data'
   }
 })
-</script>
+
+function onClick (item) {
+  const obj = memberKcDictionary[item]
+  obj.map((item, index) => { item.index = index + 1 })
+  table.rows = memberKcDictionary[item]
+}</script>
 
 <style>
 #app {
