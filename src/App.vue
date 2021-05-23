@@ -1,5 +1,5 @@
 <template>
-  <button v-for="item in bossNameArray" :key="item">
+  <button v-for="item in bossNameArray" :key="item" v-on:click="table.rows=memberKcDictionary[item]">
     {{item}}
   </button>
   <table-lite
@@ -28,16 +28,16 @@ export default {
     TableLite
   },
   data: function () {
-    return { d: true, table, bossNameArray, currentBossName }
+    return { d: true, table, bossNameArray, currentBossRows, memberKcDictionary }
   }
 }
 
-const test = hiScores.memberKcDictionary
-console.log(test)
-const bossNameArray = Object.keys(test)
-console.log(bossNameArray)
-const currentBossName = test[bossNameArray[0]]
-console.log(currentBossName)
+const memberKcDictionary = hiScores.memberKcDictionary
+// console.log(memberKcDictionary)
+const bossNameArray = Object.keys(memberKcDictionary)
+// console.log(bossNameArray)
+const currentBossRows = memberKcDictionary[bossNameArray[0]]
+// console.log('currentBossRows ' + currentBossRows)
 const table = reactive({
   isLoading: false,
   isReSearch: false,
@@ -56,28 +56,12 @@ const table = reactive({
       sortable: true,
       display: function (row) {
         return (
-          '<a href="#" data-id="' + row.value + '" class="name-btn">' + row.name + '</button>'
-        )
-      }
-    },
-    {
-      label: 'Email',
-      field: 'email',
-      width: '15%',
-      sortable: true
-    },
-    {
-      label: '',
-      field: 'quick',
-      width: '10%',
-      display: function (row) {
-        return (
-          '<button type="button" data-id="' + row.user_id + '" class="quick-btn">Button</button>'
+          row.value
         )
       }
     }
   ],
-  rows: test[currentBossName],
+  rows: currentBossRows,
   totalRecordCount: 2,
   sortable: {
     order: 'id',
